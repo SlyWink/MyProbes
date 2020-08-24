@@ -1,14 +1,22 @@
+#ifndef INIT
+
+#ifdef LINKY
+  Linky* g_probe ;
+#endif
+
+
 void setup() {
-  // put your setup code here, to run once:
+
   Serial.begin(115200) ;
-  Serial.println(ESP.getChipId()) ;
+#ifdef LINKY
+  g_probe = new Linky() ;
+#endif
+
 }
 
 void loop() {
-  static Linky lk ;
 
-  lk.newMessage(MsgType::DATA_REQUEST) ;
-  lk.loopSend() ;
-  delay(200) ;
-
+  g_probe->mesh.update() ;
 }
+
+#endif

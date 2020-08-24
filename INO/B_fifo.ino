@@ -5,7 +5,6 @@ class Fifo {
     ~Fifo(void) ;
     bool isEmpty(void) ;
     bool isFull(void) ;
-    bool pushRef(T& p_value, bool p_dropOldest=true) ;
     bool push(T p_value, bool p_dropOldest=true) ;
     bool pull(T& p_value) ;
     T* operator[](size_t p_rank) ;
@@ -15,11 +14,14 @@ class Fifo {
     T* find(bool (*p_callback)(T*)) ;
 
   private:
-    T* _fifo[S] ;
+    T _fifo[S] ;
     byte _first ;
     byte _last ;
     byte _count ;
 } ;
+
+
+// === ### ===
 
 
 template <typename T, size_t S> Fifo<T,S>::Fifo(void) {
@@ -43,31 +45,24 @@ template <typename T, size_t S> bool Fifo<T,S>::isFull(void) {
 } ;
 
 
-template <typename T, size_t S> bool Fifo<T,S>::pushRef(T& p_value, bool p_dropOldest) {
+template <typename T, size_t S> bool Fifo<T,S>::push(T p_value, bool p_dropOldest) {
   if (this->isFull()) {
     if (p_dropOldest)
       this->_first = (this->_first + 1) % S ; // Buffer full, drop first value
     else
       return false ;
-  } else {
+  } else
     this->_count++ ;
-    this->_fifo[this->_last] = (T*) malloc(sizeof(T)) ;
-  }
-  *(this->_fifo[this->_last]) = p_value ;
+debug(F("DBG : Fifo::push -> ")) ; debugln(sizeof(p_value)) ;
+  this->_fifo[this->_last] = p_value ;
   this->_last = (this->_last + 1) % S ;
   return true ;
 } ;
 
 
-template <typename T, size_t S> bool Fifo<T,S>::push(T p_value, bool p_dropOldest) {
-  return this->pushRef(p_value,p_dropOldest) ;
-} ;
-
-
 template <typename T, size_t S> bool Fifo<T,S>::pull(T& p_value) {
   if (this->isEmpty()) return false ;
-  p_value = *(this->_fifo[this->_first]) ;
-  free(this->_fifo[this->_first]) ;
+  p_value = this->_fifo[this->_first] ;
   this->_first = (this->_first + 1) % S ;
   this->_count-- ;
   return true ;
@@ -76,7 +71,7 @@ template <typename T, size_t S> bool Fifo<T,S>::pull(T& p_value) {
 
 template <typename T, size_t S> T* Fifo<T,S>::operator[](size_t p_rank) {
   if (p_rank >= this->_count) return NULL ;
-  return this->_fifo[(uint8_t) (((int) this->_first + (int) p_rank) % S)] ;
+  return &(this->_fifo[(uint8_t) (((int) this->_first + (int) p_rank) % S)]) ;
 } ;
 
 

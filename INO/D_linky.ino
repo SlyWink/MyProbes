@@ -18,7 +18,7 @@ class Linky: public Probe {
 } ;
 
 
-Linky::Linky(void) : Probe(F("LINKY")) {
+Linky::Linky(void) : Probe(F("LINKY"),TASK_MILLISECOND * 6) { // 1200bps = 1 byte per 6 ms
   pinMode(_RX_PIN,INPUT) ;
   this->_serial = new SoftwareSerial(this->_RX_PIN,SW_SERIAL_UNUSED_PIN) ;
   this->_serial->begin(1200) ;
@@ -32,15 +32,19 @@ void Linky::readSensor(void) {
   static uint32_t l_tstBase = 111111L ;
   static uint32_t l_tstPapp = 222222L ;
   static uint16_t l_tstIinst = 3333 ;
+  static unsigned long l_millis = 0 ;
 
   if (this->testing) {
-    this->_base = l_tstBase++ ;
-    this->_iinst = l_tstIinst++ ;
-    this->_papp = l_tstPapp++ ;
-    this->_available = true ;
+    if (millis() - l_millis > 3000) {
+      debugln(F("DBG : Linky::readSensor")) ;
+      this->_base = l_tstBase++ ;
+      this->_iinst = l_tstIinst++ ;
+      this->_papp = l_tstPapp++ ;
+      this->_available = true ;
+      l_millis = millis() ;
+    }
   } else {
     if (this->_readLine(l_label,l_value)) {
-//Serial.println(l_label + "=" + l_value) ;
       if (l_label == F("BASE")) l_base = atoi(l_value.c_str()) ;
       else
         if (l_label == F("IINST")) l_iinst = atoi(l_value.c_str()) ;
