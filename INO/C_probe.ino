@@ -5,7 +5,7 @@ class Probe {
     void loopSend(void) ;
     void receiveCallback(uint32_t p_fromChipId, String& p_message) ;
     void loopReceived(void) ;
-    virtual void readSensor(void) ;
+    void readSensor(void) ;
     Scheduler sched ;
     painlessMesh mesh ;
      
@@ -19,7 +19,7 @@ class Probe {
     Task* _taskLoopReceived ;
     Task* _taskLoopSensor ;
     void readConfig(void) ;
-    virtual bool _fillData(JsonObject& p_json) ;
+    virtual bool _fillData(JsonObject& p_obj) ;
 
   private :
     Fifo<MESSAGE_T,4> _sndBuffer ;

@@ -1,5 +1,7 @@
 //#define INIT
-#define LINKY
+//#define LINKY
+//#define GAZPAR
+#define METEO
 #define WANTDEBUG
 
 #include <EEPROM.h>
@@ -16,7 +18,7 @@ const uint32_t CHIP6_ID = 0x00e5e76b ;
 
 #define BRIDGE CHIP2_ID
 #define LINKY  CHIP4_ID
-#define GASPAR CHIP5_ID
+#define GAZPAR CHIP5_ID
 #define METEO  CHIP6_ID
 */
 
@@ -25,7 +27,7 @@ const size_t PROBES_COUNT = 4 ;
 /*
 const char CHIP2_NAME[] PROGMEM = "BRIDGE" ;
 const char CHIP4_NAME[] PROGMEM = "LINKY" ;
-const char CHIP5_NAME[] PROGMEM = "GASPAR" ;
+const char CHIP5_NAME[] PROGMEM = "GAZPAR" ;
 const char CHIP6_NAME[] PROGMEM = "METEO" ;
 */
 

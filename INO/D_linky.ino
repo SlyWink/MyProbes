@@ -6,11 +6,11 @@ class Linky: public Probe {
     void readSensor(void) ;
     
   protected :
-    bool _fillData(JsonObject& p_data) ;
+    bool _fillData(JsonObject& p_obj) ;
     
   private :
     const int _RX_PIN = D6 ;
-    SoftwareSerial* _serial = NULL ;
+    SoftwareSerial* _serial ;
     bool _available = false ;
     uint32_t _base, _papp ;
     uint16_t _iinst ;
@@ -20,7 +20,8 @@ class Linky: public Probe {
 
 Linky::Linky(void) : Probe(F("LINKY"),TASK_MILLISECOND * 6) { // 1200bps = 1 byte per 6 ms
   pinMode(_RX_PIN,INPUT) ;
-  this->_serial = new SoftwareSerial(this->_RX_PIN,SW_SERIAL_UNUSED_PIN) ;
+//  this->_serial = new SoftwareSerial(this->_RX_PIN,SW_SERIAL_UNUSED_PIN) ;
+  this->_serial = new SoftwareSerial(this->_RX_PIN) ;
   this->_serial->begin(1200) ;
 } ;
 
@@ -82,7 +83,7 @@ bool Linky::_readLine(String& p_label, String& p_value) {
   static uint8_t l_status = 0 ;
   static char l_checksum ;
 
-  if (_serial == NULL || !_serial->available()) return false ;
+  if (!this->_serial->available()) return false ;
   char l_char = _serial->read() & 0x7F ; // Ignore parity bit
   switch(l_char) {
     case ASCII_STX :
